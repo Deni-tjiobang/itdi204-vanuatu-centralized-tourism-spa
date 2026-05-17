@@ -1,0 +1,850 @@
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ===== NAVBAR (DESKTOP) ===== */
+.navbar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 0.25)
+  );
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 34px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.nav-links li:hover {
+  color: #f4b400;
+}
+
+/* Hide hamburger on desktop */
+.hamburger {
+  display: none;
+}
+
+/* ===== HERO / HOME ===== */
+.home {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.6),
+    rgba(0, 0, 0, 0.2)
+  );
+}
+
+.home-content {
+  position: absolute;
+  bottom: 30%;
+  left: 8%;
+  color: white;
+  max-width: 520px;
+}
+
+.home-content h1 {
+  font-size: 3rem;
+  font-family: Georgia, serif;
+}
+
+.home-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.home-content button {
+  margin-top: 15px;
+  padding: 12px 22px;
+  background: #f4b400;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ===== FULL SCREEN MOBILE MENU ===== */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.overlay-menu li {
+  color: white;
+  font-size: 22px;
+  margin: 18px 0;
+  cursor: pointer;
+}
+
+.overlay-menu li:hover {
+  color: #f4b400;
+}
+
+.close-btn {
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nav-links.desktop {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .home-content {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    padding: 140px 20px 0;
+    text-align: center;
+  }
+
+  .home-content h1 {
+    font-size: 2rem;
+  }
+
+  .home-content button {
+    width: 100%;
+  }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.destination-card {
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.destination-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* DESTINATIONS GRID */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.destination-card {
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-4px);
+}
+
+.destination-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.destination-card h3 {
+  margin: 10px 0 5px;
+}
+
+.destination-card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* =========================
+   BOOKING PAGE
+========================= */
+
+.booking-page {
+  background: #f5f7fa;
+}
+
+.booking-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* Destination Panel */
+.booking-destination {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.booking-image {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.booking-destination h2 {
+  margin-bottom: 10px;
+}
+
+.booking-destination p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Booking Card */
+.booking-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.booking-card h3 {
+  margin-bottom: 15px;
+}
+
+/* Booking Form */
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.booking-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.booking-form button {
+  margin-top: 10px;
+  padding: 12px;
+  background: #f4b400;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .booking-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   FOREIGNER TOURS
+========================= */
+
+.tour-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.tour-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.tour-card h3 {
+  margin-bottom: 8px;
+}
+
+.tour-card ul {
+  padding-left: 18px;
+}
+
+.tour-card li {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+/* ===== FOREIGNER TOURS PAGE ===== */
+
+.foreigner-page {
+  background: #f5f7fa;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  margin-top: 80px; /* pushes below navbar */
+}
+
+.tour-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.tour-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 520px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.tour-card h3 {
+  margin-bottom: 5px;
+}
+
+.rating,
+.location {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.tour-card ul {
+  padding-left: 18px;
+  margin-bottom: 15px;
+}
+
+.tour-card li {
+  font-size: 0.9rem;
+}
+
+.whatsapp-btn {
+  margin-top: auto;       /* 🔑 keeps all buttons in a straight line */
+  padding: 12px;
+  width: 100%;
+  background: #25D366;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.whatsapp-btn:hover {
+  background: #1ebe5d;
+}
+
+/* ===== FOREIGNER TOURS PAGE ===== */
+
+.page-header {
+  text-align: center;
+  margin: 90px 0 30px;
+}
+
+.tour-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.tour-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* LOGO HANDLING */
+.tour-logo {
+  height: 120px;
+  background: #f1f3f5;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.tour-logo img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+/* BUTTON ALIGNMENT */
+.whatsapp-btn {
+  margin-top: auto; /* THIS keeps them in a straight line */
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #25d366;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.whatsapp-btn:hover {
+  background: #1ebe5d;
+}
+
+/* ===== SHARED PAGE HEADER ===== */
+
+.page-header {
+  text-align: center;
+  margin: 90px 20px 40px;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 1rem;
+  color: #555;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ===== DESTINATIONS PAGE ===== */
+
+.destinations-page {
+  background: #f5f7fa;
+}
+
+.destination-card.enhanced {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.destination-card.enhanced:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+}
+
+.destination-card.enhanced img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.destination-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.destination-content h3 {
+  margin-bottom: 8px;
+}
+
+.destination-content p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.explore-link {
+  margin-top: auto;
+  font-weight: bold;
+  color: #0066cc;
+  font-size: 0.9rem;
+}
+
+/* ===== FOREIGNER TOURS ENHANCED ===== */
+
+.foreigner-page {
+  background: #f5f7fa;
+}
+
+.tour-card.enhanced {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tour-card.enhanced:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+}
+
+.tour-content {
+  flex-grow: 1;
+}
+
+.tagline {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.tour-card ul {
+  padding-left: 18px;
+  margin-top: 8px;
+}
+
+.explore-link {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #0066cc;
+  font-size: 0.9rem;
+}
+
+/* BUTTON ALIGNMENT (same as Destinations philosophy) */
+.whatsapp-btn {
+  margin-top: auto;
+}
+
+/* ===== BOOKING PAGE ===== */
+
+.booking-page {
+  background: #f5f7fa;
+}
+
+.booking-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.booking-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.destination-summary img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.summary-content h3 {
+  margin-bottom: 6px;
+}
+
+.summary-content p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.summary-note {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.booking-form input {
+  padding: 10px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.booking-info {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .booking-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   ACCOMMODATIONS – POLISHED
+========================= */
+
+.accommodations-page {
+  background: #f5f7fa;
+}
+
+/* SEARCH BAR */
+.search-box {
+  max-width: 420px;
+  margin: 0 auto 40px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+/* ACCOMMODATION CARD */
+.accommodation-card.enhanced {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.accommodation-card.enhanced:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 35px rgba(0,0,0,0.12);
+}
+
+/* CARD HEADER */
+.accommodation-content h3 {
+  margin-bottom: 6px;
+  font-size: 1.05rem;
+}
+
+.accommodation-content .meta {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+/* DESCRIPTION */
+.accommodation-content p {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+/* CONTACT SECTION */
+.accommodation-content p strong {
+  color: #000;
+}
+
+/* LINKS */
+.accommodation-content a {
+  color: #0066cc;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.accommodation-content a:hover {
+  text-decoration: underline;
+}
+
+/* CONTACT GROUPING */
+.accommodation-content p:last-child,
+.accommodation-content p:nth-last-child(2),
+.accommodation-content p:nth-last-child(3) {
+  margin-bottom: 6px;
+}
+
+/* OPTIONAL ICON FEEL (subtle) */
+.accommodation-content p:has(strong) {
+  padding-top: 6px;
+  border-top: 1px solid #eee;
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .search-box {
+    max-width: 100%;
+  }
+}
+
+/* =========================
+   ACCOMMODATIONS – CONTACT REFINEMENT
+========================= */
+
+/* Group contact info into a visual footer */
+.accommodation-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Footer separator */
+.accommodation-content .contact-section {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+}
+
+/* Contact text styling */
+.contact-section p {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+/* Handle long email + URLs safely */
+.contact-section a {
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-all;      /* KEY FIX */
+  overflow-wrap: anywhere;   /* modern fallback */
+  color: #0066cc;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.contact-section a:hover {
+  text-decoration: underline;
+}
+
+/* Label emphasis */
+.contact-section strong {
+  color: #000;
+  font-weight: 600;
+}
+
+/* =========================
+   ACCOMMODATIONS – ICON CONTACT
+========================= */
+
+.contact-section {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+}
+
+.contact-section p {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+/* Icon styling */
+.contact-section .icon {
+  width: 18px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+/* Long email / URL safety */
+.contact-section a {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  color: #0066cc;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.contact-section a:hover {
+  text-decoration: underline;
+}
+
+.contact-section strong {
+  font-weight: 600;
+  color: #000;
+}
+
+/* =========================
+   CAR RENTAL LOGOS
+========================= */
+
+.logo-box {
+  height: 90px;
+  background: #f1f3f5;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.logo-box img {
+  max-width: 85%;
+  max-height: 70px;
+  object-fit: contain;
+}
