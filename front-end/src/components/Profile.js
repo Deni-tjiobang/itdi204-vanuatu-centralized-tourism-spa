@@ -3,8 +3,6 @@ import { FaUserCircle } from "react-icons/fa";
 
 function Profile({ user }) {
   const [isEditing, setIsEditing] = useState(false);
-
-  // ✅ IMAGE STATE (new)
   const [image, setImage] = useState(user.image || "");
 
   const [formData, setFormData] = useState({
@@ -22,7 +20,6 @@ function Profile({ user }) {
     });
   };
 
-  // ✅ IMAGE UPLOAD FUNCTION
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -43,7 +40,11 @@ function Profile({ user }) {
     reader.readAsDataURL(file);
   };
 
-  // ✅ ✅ ✅ FIXED HANDLE SAVE (ONLY CHANGE MADE)
+  const formatDate = (date) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString();
+  };
+
   const handleSave = async () => {
     const updatedUser = {
       ...user,
@@ -81,9 +82,7 @@ function Profile({ user }) {
 
       <div className="auth-card">
 
-        {/* ✅ PROFILE IMAGE SECTION */}
         <div className="profile-image-section">
-
           {image ? (
             <img src={image} className="profile-image" alt="profile" />
           ) : (
@@ -99,19 +98,21 @@ function Profile({ user }) {
               hidden
             />
           </label>
-
         </div>
 
         <h2>{user.name}</h2>
 
-        {/* ✅ VIEW MODE */}
         {!isEditing && (
           <>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>First Name:</strong> {user.firstName}</p>
-            <p><strong>Last Name:</strong> {user.lastName}</p>
-            <p><strong>Country:</strong> {user.country}</p>
-            <p><strong>Date of Birth:</strong> {user.dob}</p>
+            <div className="profile-info">
+
+              <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>First Name:</strong> {user.firstName || "-"}</p>
+              <p><strong>Last Name:</strong> {user.lastName || "-"}</p>
+              <p><strong>Country:</strong> {user.country || "-"}</p>
+              <p><strong>Date of Birth:</strong> {formatDate(user.dob)}</p>
+
+            </div>
 
             <button
               className="profile-btn"
@@ -122,7 +123,6 @@ function Profile({ user }) {
           </>
         )}
 
-        {/* ✅ EDIT MODE */}
         {isEditing && (
           <>
             <div className="input-box">
