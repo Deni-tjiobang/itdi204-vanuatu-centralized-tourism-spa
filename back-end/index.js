@@ -1,3 +1,5 @@
+require("dotenv").config();
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -6,12 +8,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+let dbPassword;
+
+//  If running on Render (secret file exists)
+if (process.env.RENDER) {
+  try {
+    dbPassword = fs.readFileSync(
+      "/etc/secrets/DB_PASSWORD",
+      "utf8"
+    ).trim();
+  } catch (error) {
+    console.error("Could not read secret file:", error);
+  }
+} else {
+  //  If running locally
+  dbPassword = process.env.DB_PASSWORD;
+}
+
+//  DATABASE CONNECTION
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "vanuatu_centralized_tourism_spa",
-  password: "Deni2005",
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: dbPassword,
+  port: process.env.DB_PORT,
 });
 
 app.get("/accommodations", async (req, res) => {
