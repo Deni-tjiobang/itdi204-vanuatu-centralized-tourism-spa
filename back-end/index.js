@@ -1,3 +1,5 @@
+require("dotenv").config();
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -6,12 +8,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+let dbPassword;
+
+//  If running on Render (secret file exists)
+if (process.env.RENDER) {
+  try {
+    dbPassword = fs.readFileSync(
+      "/etc/secrets/DB_PASSWORD",
+      "utf8"
+    ).trim();
+  } catch (error) {
+    console.error("Could not read secret file:", error);
+  }
+} else {
+  //  If running locally
+  dbPassword = process.env.DB_PASSWORD;
+}
+
+//  DATABASE CONNECTION
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "vanuatu_centralized_tourism_spa",
-  password: "Deni2005",
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: dbPassword,
+  port: process.env.DB_PORT,
 });
 
 app.get("/accommodations", async (req, res) => {
@@ -34,10 +54,11 @@ app.get("/tours", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const { name, email, password, firstName, lastName, Country, dob } = req.body;
+  const { name, email, password, firstName, lastName, country, dob } = req.body;
 
   try {
-    // check if user exists
+    console.log("SIGNUP DATA:", req.body);  // ✅ DEBUG
+
     const existing = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email]
@@ -47,9 +68,7 @@ app.post("/signup", async (req, res) => {
       return res.json({ error: "User already exists" });
     }
 
-    // insert user
-    
-const result = await pool.query(
+    const result = await pool.query(
       `INSERT INTO users 
       (name, email, password, first_name, last_name, country, dob) 
       VALUES ($1, $2, $3, $4, $5, $6, $7) 
@@ -57,13 +76,15 @@ const result = await pool.query(
       [name, email, password, firstName, lastName, country, dob]
     );
 
+    console.log("INSERT SUCCESS:", result.rows[0]); 
+
     res.json({
       message: "Signup successful",
       user: result.rows[0]
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("SIGNUP ERROR:", err); 
     res.status(500).json({ error: "Server error during signup" });
   }
 });

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaGlobe } from "react-icons/fa";
 
-// ✅ IMPORT IMAGES (FROM YOUR SCREENSHOT)
 import breakas from "../images/acclogo/breakers.jpg";
 import erakor from "../images/acclogo/erakor.jpg";
 import grandhotel from "../images/acclogo/grand_hotel.jpg";
