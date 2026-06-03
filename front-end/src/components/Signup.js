@@ -20,37 +20,34 @@ function Signup({ onAuthSuccess, setMode }) {
   const handleSignup = async () => {
     const fullName = firstName + " " + lastName;
 
-    const res = await fetch("http://localhost:5000/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: fullName,
-        email,
-        password,
-        firstName,
-        lastName,
-        country,
-        dob
-      })
-    });
+    try {
+      const res = await fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: fullName,
+          email,
+          password,
+          firstName,
+          lastName,
+          country,
+          dob
+        })
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data.user) {
-      // STORE FULL USER OBJECT
-      const fullUser = {
-        ...data.user,
-        firstName,
-        lastName,
-        country,
-        dob
-      };
+      if (data.user) {
+        onAuthSuccess(data.user);
+      } else {
+        alert(data.error || "Signup failed");
+      }
 
-      onAuthSuccess(fullUser);
-    } else {
-      alert(data.error);
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
     }
   };
 

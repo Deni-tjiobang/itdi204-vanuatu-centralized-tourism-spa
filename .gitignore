@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+# Dependencies
+node_modules/
+=======
 node_modules
 .env
 node_modules
+>>>>>>> 8bf599db9fda299aa91814b6576b4ef8a4a44fe8
