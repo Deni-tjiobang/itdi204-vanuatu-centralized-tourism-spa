@@ -128,3 +128,82 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ error: "Server error during login" });
   }
 });
+
+app.post("/admin-signup", async (req, res) => {
+  const { name, email, password, department, secretKey } = req.body;
+
+  const validKey = process.env.ADMIN_SECRET_KEY || "VANUATU_ADMIN_2026";
+
+  if (secretKey !== validKey) {
+    return res.status(403).json({ error: "Invalid secret key" });
+  }
+
+  try {
+    const existing = await pool.query(
+      "SELECT * FROM managers WHERE email = $1",
+      [email]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.json({ error: "Manager account already exists" });
+    }
+
+    // ✅ THIS WAS MISSING (IMPORTANT)
+    const result = await pool.query(
+      `INSERT INTO managers (name, email, password, department)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, email, department`,
+      [name, email, password, department]
+    );
+
+    res.json({ manager: result.rows[0] });
+
+  } catch (err) {
+    console.error("ADMIN SIGNUP ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email,
+       country, dob, created_at
+       FROM users`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+app.post("/admin-login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM managers WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.json({ error: "Manager account not found" });
+    }
+
+    const manager = result.rows[0];
+
+    if (manager.password !== password) {
+      return res.json({ error: "Incorrect password" });
+    }
+
+    const { password: _pw, ...safeManager } = manager;
+
+    res.json({ manager: safeManager });
+
+  } catch (err) {
+    console.error("ADMIN LOGIN ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});

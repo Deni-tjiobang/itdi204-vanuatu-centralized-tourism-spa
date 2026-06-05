@@ -1,31 +1,39 @@
-function WelcomeScreen({ onStart }) {
+import React from "react";
+
+function WelcomeScreen({ onTourist, onAdmin }) {
   return (
     <div className="welcome-screen">
-
       <div className="welcome-content">
 
-        {/* ✅ LARGE LOGO */}
-        <img src="/main_logo.png" className="welcome-logo" alt="logo" />
+        <img
+          src="/main_logo.png"
+          alt="Vanuatu Logo"
+          className="welcome-logo"
+        />
 
-        {/* ✅ TEXT */}
-        <h4 className="welcome-small">Welcome to</h4>
+        <p className="welcome-small">Welcome to</p>
 
-        <h1 className="welcome-title">Vanuatu Centralized Booking System</h1>
+        <h1 className="welcome-title">
+          Vanuatu Centralized Booking System
+        </h1>
 
-        {/* ✅ DECORATIVE LINE */}
         <div className="welcome-divider"></div>
 
         <p className="welcome-text">
-          Your gateway to unforgettable experiences in Vanuatu.
+          Choose how you want to enter the system
         </p>
 
-        {/* ✅ BUTTON */}
-        <button className="start-btn" onClick={onStart}>
-          Enter Platform →
+        {/* TOURIST BUTTON */}
+        <button className="start-btn" onClick={onTourist}>
+          Continue as Tourist →
+        </button>
+
+        {/* ADMIN BUTTON */}
+        <button className="manager-btn" onClick={onAdmin}>
+          Continue as Admin →
         </button>
 
       </div>
-
     </div>
   );
 }

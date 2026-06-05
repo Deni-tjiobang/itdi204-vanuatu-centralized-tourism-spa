@@ -413,6 +413,24 @@ background: linear-gradient(
   margin-bottom: 30px;
 }
 
+.manager-btn {
+  padding: 16px 40px;
+  border: none;
+  border-radius: 40px;
+  background: linear-gradient(90deg, #2f80ed, #1c5aa6);
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.manager-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
 /* BUTTON (MATCHES IMAGE STYLE) */
 .start-btn {
   padding: 16px 40px;
@@ -834,3 +852,78 @@ background: linear-gradient(
     transform: translateY(0);
   }
 }
+/* =========================================
+   ADMIN DASHBOARD — MODERN STYLE ✅
+========================================= */
+
+/* HEADER */
+.admin-header {
+  background: linear-gradient(135deg, #2F80ED, #43C6AC);
+  padding: 30px 20px;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.admin-header p {
+  margin-top: 5px;
+  opacity: 0.9;
+}
+
+/* NAV BUTTONS */
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.admin-tab-btn {
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: none;
+  background: #eaf4ff;
+  color: #2F80ED;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.admin-tab-btn:hover {
+  transform: translateY(-2px);
+}
+
+.admin-tab-btn.active {
+  background: linear-gradient(90deg, #2F80ED, #43C6AC);
+  color: white;
+}
+
+/* CARD ACTIONS */
+.admin-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.admin-delete {
+  background: #ed6262;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* EMPTY TEXT */
+.admin-empty {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+
+
