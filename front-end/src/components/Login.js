@@ -24,11 +24,11 @@ function Login({ onAuthSuccess, setMode }) {
 
       const data = await res.json();
 
-      if (data.user) {
-        onAuthSuccess(data.user);
-      } else {
-        alert(data.error || "Login failed");
-      }
+      if (data.error?.includes("deleted")) {
+  alert("Your account has been removed by an administrator.");
+} else {
+  alert(data.error || "Login failed");
+}
 
     } catch (err) {
       console.error(err);

@@ -25,23 +25,21 @@ function CarRentals() {
   }, []);
 
   const getLogo = (name) => {
-  const n = name.toLowerCase();
-
-  if (n.includes("world car")) return worldcar;
-  if (n.includes("europcar")) return europcar;
-  if (n.includes("avis")) return avis;
-  if (n.includes("hertz")) return hertz;
-  if (n.includes("budget")) return budget;
-  if (n.includes("on wheels")) return onwheels;
-  if (n.includes("go2rent")) return go2rent;
-  if (n.includes("global drive")) return globaldrive;
-  if (n.includes("santo tropical")) return santotropical;
-  if (n.includes("pacific car")) return pacificcarhire;
-  if (n.includes("santo car")) return santocarhire;
-  if (n.includes("wanderlust")) return wanderlust;
-
-  return null;
-};
+    const n = name.toLowerCase();
+    if (n.includes("world car")) return worldcar;
+    if (n.includes("europcar")) return europcar;
+    if (n.includes("avis")) return avis;
+    if (n.includes("hertz")) return hertz;
+    if (n.includes("budget")) return budget;
+    if (n.includes("on wheels")) return onwheels;
+    if (n.includes("go2rent")) return go2rent;
+    if (n.includes("global drive")) return globaldrive;
+    if (n.includes("santo tropical")) return santotropical;
+    if (n.includes("pacific car")) return pacificcarhire;
+    if (n.includes("santo car")) return santocarhire;
+    if (n.includes("wanderlust")) return wanderlust;
+    return null;
+  };
 
   const filtered = rentals.filter(r =>
     `${r.name} ${r.location} ${r.services}`
@@ -50,46 +48,55 @@ function CarRentals() {
   );
 
   return (
-    <div className="page cars-page">
-      <div className="page-header">
+    <div className="page">
+
+      <div className="page-header sticky-header">
         <h1>Car Rentals</h1>
         <p>Compare trusted rental companies.</p>
+
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search rentals..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search rentals..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+      <div className="page-content">
+        <div className="card-grid">
+          {filtered.map((r, i) => (
+            <div key={i} className="card">
 
-      <div className="card-grid">
-        {filtered.map((r, i) => (
-          <div key={i} className="card">
-
-            {getLogo(r.name) && (
-  <img className="logo" src={getLogo(r.name)} alt={r.name} />
-)}
-
-            <h3>{r.name}</h3>
-            <p className="meta">{r.location}</p>
-            <p>{r.services}</p>
-
-            <div className="contact">
-              <p><FaMapMarkerAlt /> {r.address}</p>
-              <p><FaPhone /> {r.phone}</p>
-
-              {r.email && (
-                <p><FaEnvelope /> <a href={`mailto:${r.email}`}>{r.email}</a></p>
+              {getLogo(r.name) && (
+                <img className="logo" src={getLogo(r.name)} alt={r.name} />
               )}
 
-              <p><FaGlobe /> <a href={r.website} target="_blank" rel="noreferrer">Visit</a></p>
-            </div>
+              <h3>{r.name}</h3>
+              <p className="meta">{r.location}</p>
+              <p>{r.services}</p>
 
-          </div>
-        ))}
+              <div className="contact">
+                <p><FaMapMarkerAlt /> {r.address}</p>
+                <p><FaPhone /> {r.phone}</p>
+
+                {r.email && (
+                  <p>
+                    <FaEnvelope /> <a href={`mailto:${r.email}`}>{r.email}</a>
+                  </p>
+                )}
+
+                {r.website && (
+                  <p>
+                    <FaGlobe /> <a href={r.website} target="_blank" rel="noreferrer">Visit</a>
+                  </p>
+                )}
+              </div>
+
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

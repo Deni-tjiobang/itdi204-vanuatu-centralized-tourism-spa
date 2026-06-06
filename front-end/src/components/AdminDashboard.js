@@ -43,30 +43,25 @@ import vilaHope from "../images/logos/vilahope.png";
 import waterMusic from "../images/water_music.jpg";
 
 const imageMap = {
-  // accommodations
-  "Breakers Resort": breakers,
-  "Breakers": breakers,
-  "Breakas Resort": breakers,
-  "Breakas": breakers,
+   "Breakas Beach Resort": breakers,
   "Erakor Island Resort": erakor,
   "Grand Hotel": grandHotel,
   "The Havannah": havannah,
   "Holiday Inn": holidayInn,
   "Melanesian Hotel": melanesian,
   "Melanesian": melanesian,
+  "Melanesian Port Vila": melanesian,
   "Nasama Resort": nasama,
   "Ramada Resort": ramada,
-  "Tamanu Beach": tamanu,
-  "Tamanu": tamanu,
+  "Tamanu on the Beach": tamanu,
   "Warwick Le Lagon": warwick,
 
-  // cars
   "Avis Vanuatu": avis,
   "Budget Vanuatu": budget,
-  Europcar: europcar,
+  "Europcar": europcar,
   "Global Drive": globaldrive,
   "Go2Rent": go2rent,
-  Hertz: hertz,
+  "Hertz" : hertz,
   "OnWheel Vanuatu": onwheels,
   "On Wheels Vanuatu": onwheels,
   "On Wheels": onwheels,
@@ -74,13 +69,12 @@ const imageMap = {
   "Pacific Car Hire": pacificcarhire,
   "Santo Car Hire": santocarhire,
   "Santo Tropical": santotropical,
-  Wanderlust: wanderlust,
+  "Wanderlust": wanderlust,
   "World Car Rentals": worldcarrentals,
 
-  // tours
-  Atmosphere: atmosphere,
+  "Atmosphere": atmosphere,
   "Bountiful Tours": bountiful,
-  Evergreen: evergreen,
+  "Evergreen": evergreen,
   "Lelepa Island Tour": lelepa,
   "Mystery Island Tours": mysteryisland,
   "Nature Tours": nature,
@@ -90,7 +84,6 @@ const imageMap = {
   "Santo Heritage Tours": santoheritage,
   "South Pacific Tours": southpacific,
   "Vanuatu Eco Tours": vanuatuecotours,
-  "VanuatuEcoTours": vanuatuecotours,
   "Vanuatu Eco": vanuatuecotours,
   "Vila Hope": vilaHope,
   "Water Music": waterMusic,
@@ -102,102 +95,251 @@ function AdminDashboard({ manager, onLogout }) {
   const [tab, setTab] = useState("users");
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
+  const [notification, setNotification] = useState(null);
+
+  const [editingItem, setEditingItem] = useState(null);
+  const [formData, setFormData] = useState({});
 
   const API = "http://localhost:5000";
 
   useEffect(() => {
     let endpoint = "/admin/users";
     if (tab === "accommodations") endpoint = "/accommodations";
+    if (tab === "users") endpoint = "/admin/users";
     if (tab === "cars") endpoint = "/car-rentals";
     if (tab === "tours") endpoint = "/tours";
 
     fetch(`${API}${endpoint}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Server returned error");
+        if (!res.ok) throw new Error("Server error");
         return res.json();
       })
-      .then((resData) => setData(resData))
-      .catch((err) => {
-        console.error("Fetch error:", err.message);
-        setData([]);
-      });
+      .then(setData)
+      .catch(() => setData([]));
   }, [tab]);
 
-  const filtered = Array.isArray(data)
-    ? data.filter((item) =>
-        Object.values(item || {})
-          .join(" ")
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      )
-    : [];
+  const filtered = data.filter((item) =>
+    Object.values(item || {})
+      .join(" ")
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   const getImage = (item) => {
-    if (!item || !item.name) return null;
+    if (!item?.name) return null;
     const key = Object.keys(imageMap).find((k) =>
       item.name.toLowerCase().includes(k.toLowerCase())
     );
     return key ? imageMap[key] : null;
   };
 
+  /* ✅ EDIT */
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setFormData(item);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSave = async () => {
+    if (!editingItem?.id) return;
+
+    let endpoint = "/admin/accommodations";
+    if (tab === "cars") endpoint = "/admin/car-rentals";
+    if (tab === "tours") endpoint = "/admin/tours";
+
+    try {
+      const res = await fetch(`${API}${endpoint}/${editingItem.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const updated = await res.json();
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === updated.id ? updated : item
+        )
+      );
+
+      setEditingItem(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* ✅ DELETE */
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this item?")) return;
+
+    let endpoint = "/admin/accommodations";
+    if (tab === "cars") endpoint = "/admin/car-rentals";
+    if (tab === "tours") endpoint = "/admin/tours";
+    if (tab === "users") endpoint = "/admin/users";
+
+    try {
+      const res = await fetch(`${API}${endpoint}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("Delete failed");
+      }
+
+      setData((prev) => prev.filter((item) => item.id !== id));
+      setNotification({
+        type: "success",
+        text: tab === "users" ? "User deleted successfully." : "Item deleted successfully.",
+      });
+
+      window.setTimeout(() => setNotification(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setNotification({ type: "error", text: "Unable to delete item." });
+      window.setTimeout(() => setNotification(null), 3000);
+    }
+  };
+
   return (
     <div className="page">
-      <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, {manager?.name}</p>
-        <button className="profile-btn" onClick={onLogout}>
-          Logout
-        </button>
-      </div>
 
-      <div className="admin-tabs">
-        {["users", "accommodations", "cars", "tours"].map((t) => (
-          <button
-            key={t}
-            className={`admin-tab-btn ${tab === t ? "active" : ""}`}
-            onClick={() => setTab(t)}
-          >
-            {t.toUpperCase()}
+      {/* ✅ STICKY HEADER (NEW BEHAVIOUR) */}
+      <div className="sticky-header">
+
+        <div className="admin-header">
+          <h1>Admin Dashboard</h1>
+          <p>Welcome back, {manager?.name}</p>
+          <button className="profile-btn" onClick={onLogout}>
+            Logout
           </button>
-        ))}
+        </div>
+
+        <div className="admin-tabs">
+          {["users", "accommodations", "cars", "tours"].map((t) => (
+            <button
+              key={t}
+              className={`admin-tab-btn ${tab === t ? "active" : ""}`}
+              onClick={() => setTab(t)}
+            >
+              {t.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
+        <div className="search-box">
+          <input
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {notification && (
+          <div className={`notification ${notification.type}`}>
+            {notification.text}
+          </div>
+        )}
+
       </div>
 
-      <div className="search-box">
-        <input
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      {/* ✅ SCROLL AREA */}
+      <div className="page-content">
+
+        <div className="card-grid">
+          {filtered.map((item, index) => {
+            const imgSrc = tab === "users" ? null : getImage(item);
+
+            return (
+              <div key={item.id || index} className="card">
+
+                {/* ✅ IMAGE */}
+                {imgSrc && (
+                  <img src={imgSrc} className="logo" alt="logo" />
+                )}
+
+                <h3>{item.name || item.email}</h3>
+
+                {item.location && <p className="meta">{item.location}</p>}
+                {item.services && <p>{item.services}</p>}
+                {item.description && <p>{item.description}</p>}
+
+                <div className="contact">
+                  {item.email && <p>Email: {item.email}</p>}
+                  {item.phone && <p>Phone: {item.phone}</p>}
+                </div>
+
+                {/* ✅ ADMIN ACTIONS */}
+                <div className="admin-actions">
+                  {tab !== "users" && (
+                    <button
+                      className="profile-btn"
+                      onClick={() => handleEdit(item)}
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    className="admin-delete"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+
+        {filtered.length === 0 && (
+          <p className="admin-empty">No data found.</p>
+        )}
+
       </div>
 
-      <div className="card-grid">
-        {filtered.map((item, index) => {
-          const imgSrc = tab === "users" ? null : getImage(item);
-          return (
-            <div key={item.id || item.email || index} className="card">
-              {imgSrc && <img src={imgSrc} className="logo" alt={item.name || "logo"} />}
+      {/* ✅ EDIT MODAL (UNCHANGED BUT KEPT) */}
+      {editingItem && (
+        <div className="modal-overlay">
+          <div className="modal-box">
 
-              <h3>{item.name || item.email}</h3>
+            <h3>Edit Item</h3>
 
-              {item.location && <p className="meta">{item.location}</p>}
-              {item.services && <p>{item.services}</p>}
-              {item.description && <p>{item.description}</p>}
+            <input
+              name="name"
+              value={formData.name || ""}
+              onChange={handleChange}
+              placeholder="Name"
+            />
 
-              <div className="contact">
-                {item.email && <p>Email: {item.email}</p>}
-                {item.phone && <p>Phone: {item.phone}</p>}
-              </div>
+            <input
+              name="location"
+              value={formData.location || ""}
+              onChange={handleChange}
+              placeholder="Location"
+            />
 
-              <div className="admin-actions">
-                <button className="profile-btn">Edit</button>
-                <button className="admin-delete">Delete</button>
-              </div>
+            <textarea
+              name="description"
+              value={formData.description || ""}
+              onChange={handleChange}
+              placeholder="Description"
+            />
+
+            <div className="modal-actions">
+              <button onClick={handleSave}>Save Changes</button>
+              <button onClick={() => setEditingItem(null)}>Cancel</button>
             </div>
-          );
-        })}
-      </div>
 
-      {filtered.length === 0 && <p className="admin-empty">No data found.</p>}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

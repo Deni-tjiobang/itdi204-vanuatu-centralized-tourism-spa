@@ -1,8 +1,9 @@
 {
   "files": {
-    "main.css": "/static/css/main.e7edc108.css",
-    "main.js": "/static/js/main.458616ba.js",
+    "main.css": "/static/css/main.2823dd3f.css",
+    "main.js": "/static/js/main.3a5cf96d.js",
     "static/js/453.2300ecb0.chunk.js": "/static/js/453.2300ecb0.chunk.js",
+    "static/media/main_background.png": "/static/media/main_background.87fa4f76ba017e1eefda.png",
     "static/media/vanuatuecotours.png": "/static/media/vanuatuecotours.1e1a9bf6bf6b071c8780.png",
     "static/media/water_music.jpg": "/static/media/water_music.d506f3a511ebf0a8794c.jpg",
     "static/media/southpacifictours.jpg": "/static/media/southpacifictours.a62110504af2911bb5eb.jpg",
@@ -20,12 +21,12 @@
     "static/media/santotropicalcar.jpg": "/static/media/santotropicalcar.81816fb2f826100a423f.jpg",
     "static/media/santocarhire.png": "/static/media/santocarhire.7f07b442228a024ebd0c.png",
     "index.html": "/index.html",
-    "main.e7edc108.css.map": "/static/css/main.e7edc108.css.map",
-    "main.458616ba.js.map": "/static/js/main.458616ba.js.map",
+    "main.2823dd3f.css.map": "/static/css/main.2823dd3f.css.map",
+    "main.3a5cf96d.js.map": "/static/js/main.3a5cf96d.js.map",
     "453.2300ecb0.chunk.js.map": "/static/js/453.2300ecb0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e7edc108.css",
-    "static/js/main.458616ba.js"
+    "static/css/main.2823dd3f.css",
+    "static/js/main.3a5cf96d.js"
   ]
 }
