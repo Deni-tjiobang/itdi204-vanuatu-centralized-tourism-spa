@@ -133,7 +133,6 @@ function AdminDashboard({ manager, onLogout }) {
     return key ? imageMap[key] : null;
   };
 
-  /* ✅ EDIT */
   const handleEdit = (item) => {
     setEditingItem(item);
     setFormData(item);
@@ -174,7 +173,7 @@ function AdminDashboard({ manager, onLogout }) {
     }
   };
 
-  /* ✅ DELETE */
+  
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this item?")) return;
 

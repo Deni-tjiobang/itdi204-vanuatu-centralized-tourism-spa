@@ -426,7 +426,6 @@ body {
 .card-grid {
   display: grid;
   margin-top: 20px;
-  
   gap: 20px;
 }
 
@@ -1034,22 +1033,18 @@ padding-top: 12px;
 
 /* HEADER */
 .admin-header {
-  background: linear-gradient(135deg, #2F80ED, #43C6AC);
-  padding: 30px 20px;
-  border-radius: 20px;
-  color: white;
-  margin-bottom: 20px;
   text-align: center;
+  margin-bottom: 30px;
 }
 
 .admin-header h1 {
-  margin: 0;
-  font-size: 28px;
+   font-size: 2rem;
+  color: #111;
 }
 
 .admin-header p {
-  margin-top: 5px;
-  opacity: 0.9;
+  font-size: 1rem;
+  color: #444;
 }
 
 /* NAV BUTTONS */
@@ -1083,13 +1078,12 @@ padding-top: 12px;
   flex-direction: column;
   gap: 8px;
 
-  width: 120px; /* ✅ FIXES ALIGNMENT ACROSS ALL CARDS */
+  width: 120px; 
 }
 
 .admin-actions button {
-  width: 100%;        /* ✅ SAME WIDTH */
-  height: 42px;       /* ✅ SAME HEIGHT */
-
+  width: 100%;       
+  height: 42px;      
   border: none;
   border-radius: 12px;
 
