@@ -207,8 +207,7 @@ function AdminDashboard({ manager, onLogout }) {
   };
 
   return (
-      <div className="page-frame" style={{ backgroundImage: `url(${waterMusic})` }}>
-        <div className="page">
+      <div className="page">
 
           {/* ✅ STICKY HEADER (NEW BEHAVIOUR) */}
         <div className="sticky-header">
@@ -341,8 +340,7 @@ function AdminDashboard({ manager, onLogout }) {
         </div>
       )}
 
-        </div>
-      </div>
+    </div>
   );
 }
 

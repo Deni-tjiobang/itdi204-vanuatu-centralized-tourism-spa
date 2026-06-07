@@ -10,7 +10,6 @@ import nasama from "../images/acclogo/nasama.jpg";
 import ramada from "../images/acclogo/ramada.png";
 import tamanu from "../images/acclogo/tamanu.jpg";
 import warwick from "../images/acclogo/warwick.png";
-import waterMusic from "../images/water_music.jpg";
 
 function Accommodations() {
   const [accommodations, setAccommodations] = useState([]);
@@ -50,8 +49,7 @@ function Accommodations() {
   if (loading) return <p className="loading">Loading accommodations...</p>;
 
   return (
-      <div className="page-frame" style={{ backgroundImage: `url(${waterMusic})` }}>
-        <div className="page">
+      <div className="page">
 
           {/* ✅ STICKY HEADER */}
         <div className="page-header sticky-header">
@@ -110,7 +108,6 @@ function Accommodations() {
         </div>
       </div>
     </div>
-  </div>
   );
 }
 

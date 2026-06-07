@@ -14,7 +14,6 @@ import santoheritage from "../images/logos/santoheritagetours.jpg";
 import southpacific from "../images/logos/southpacifictours.jpg";
 import ecolodge from "../images/logos/vanuatuecotours.png";
 import vilahope from "../images/logos/vilahope.png";
-import waterMusic from "../images/water_music.jpg";
 
 function ForeignerTours() {
   const [tours, setTours] = useState([]);
@@ -51,8 +50,7 @@ function ForeignerTours() {
   );
 
   return (
-      <div className="page-frame" style={{ backgroundImage: `url(${waterMusic})` }}>
-        <div className="page">
+      <div className="page">
 
           <div className="page-header sticky-header">
           <h1>Tour Operators</h1>
@@ -102,7 +100,6 @@ function ForeignerTours() {
         </div>
       </div>
     </div>
-  </div>
   );
 }
 

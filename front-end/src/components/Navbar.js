@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaBars, FaTimes } from "react-icons/fa";
 
 function Navbar({ setPage }) {
   const [user, setUser] = useState(null);
   const [active, setActive] = useState("home");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const goTo = (page) => {
     setPage(page);
     setActive(page);
+    setMenuOpen(false);
   };
 
   useEffect(() => {
@@ -28,7 +30,7 @@ function Navbar({ setPage }) {
         </div>
 
         {/* CENTER LINKS */}
-        <ul className="nav-links">
+        <ul className="nav-links desktop">
           <li
             className={active === "home" ? "active" : ""}
             onClick={() => goTo("home")}
@@ -55,6 +57,10 @@ function Navbar({ setPage }) {
           </li>
         </ul>
 
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
         {/* RIGHT BUTTON */}
         <div className="nav-right">
           {user ? (
@@ -68,7 +74,27 @@ function Navbar({ setPage }) {
           )}
         </div>
       </nav>
-      
+
+      {menuOpen && (
+        <>
+          <div className="menu-overlay" onClick={() => setMenuOpen(false)} />
+          <div className="side-menu">
+            <div className="menu-profile">
+              <div className="menu-avatar">
+                <FaUser />
+              </div>
+              <p>{user ? user.name : "Guest"}</p>
+            </div>
+            <ul>
+              <li onClick={() => goTo("home")}>Home</li>
+              <li onClick={() => goTo("tours")}>Tour Operators</li>
+              <li onClick={() => goTo("accommodations")}>Accommodations</li>
+              <li onClick={() => goTo("cars")}>Car Rentals</li>
+            </ul>
+            <button className="nav-btn" onClick={() => goTo(user ? "profile" : "login")}>{user ? "Profile" : "Sign In"}</button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
