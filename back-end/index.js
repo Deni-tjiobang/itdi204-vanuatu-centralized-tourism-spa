@@ -87,46 +87,6 @@ app.post("/signup", async (req, res) => {
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const result = await pool.query(
-      `SELECT 
-        id,
-        name,
-        email,
-        first_name AS "firstName",
-        last_name AS "lastName",
-        country,
-        dob
-       FROM users WHERE email = $1`,
-      [email]
-    );
-
-    if (result.rows.length === 0) {
-      return res.json({ error: "User not found" });
-    }
-
-    const user = result.rows[0];
-
-    const passwordCheck = await pool.query(
-      "SELECT password FROM users WHERE email = $1",
-      [email]
-    );
-
-    if (passwordCheck.rows[0].password !== password) {
-      return res.json({ error: "Incorrect password" });
-    }
-
-    res.json({ user });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error during login" });
-  }
-});
-
 app.post("/admin-signup", async (req, res) => {
   const { name, email, password, department, secretKey } = req.body;
 
@@ -159,6 +119,33 @@ app.post("/admin-signup", async (req, res) => {
   } catch (err) {
     console.error("ADMIN SIGNUP ERROR:", err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/admin-login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM managers WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.json({ error: "Manager account not found" });
+    }
+
+    const manager = result.rows[0];
+
+    if (manager.password !== password) {
+      return res.json({ error: "Incorrect password" });
+    }
+
+    const { password: _pw, ...safeManager } = manager;
+    res.json({ manager: safeManager });
+  } catch (err) {
+    console.error("ADMIN LOGIN ERROR:", err);
+    res.status(500).json({ error: "Server error during admin login" });
   }
 });
 

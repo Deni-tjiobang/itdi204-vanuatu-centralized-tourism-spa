@@ -251,12 +251,12 @@ function AdminDashboard({ manager, onLogout }) {
       {/* ✅ SCROLL AREA */}
       <div className="page-content">
 
-        <div className="card-grid">
+        <div className="admin-card-grid">
           {filtered.map((item, index) => {
             const imgSrc = tab === "users" ? null : getImage(item);
 
             return (
-              <div key={item.id || index} className="card">
+              <div key={item.id || index} className="admin-card">
 
                 {/* ✅ IMAGE */}
                 {imgSrc && (
