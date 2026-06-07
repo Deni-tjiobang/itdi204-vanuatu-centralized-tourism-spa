@@ -14,6 +14,7 @@ import santoheritage from "../images/logos/santoheritagetours.jpg";
 import southpacific from "../images/logos/southpacifictours.jpg";
 import ecolodge from "../images/logos/vanuatuecotours.png";
 import vilahope from "../images/logos/vilahope.png";
+import waterMusic from "../images/water_music.jpg";
 
 function ForeignerTours() {
   const [tours, setTours] = useState([]);
@@ -50,21 +51,22 @@ function ForeignerTours() {
   );
 
   return (
-    <div className="page">
+      <div className="page-frame" style={{ backgroundImage: `url(${waterMusic})` }}>
+        <div className="page">
 
-      <div className="page-header sticky-header">
-        <h1>Tour Operators</h1>
-        <p>Discover cultural and adventure experiences.</p>
+          <div className="page-header sticky-header">
+          <h1>Tour Operators</h1>
+          <p>Discover cultural and adventure experiences.</p>
 
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Search tours..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search tours..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
 
       <div className="page-content">
         <div className="card-grid">
@@ -100,6 +102,7 @@ function ForeignerTours() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

@@ -10,6 +10,7 @@ import nasama from "../images/acclogo/nasama.jpg";
 import ramada from "../images/acclogo/ramada.png";
 import tamanu from "../images/acclogo/tamanu.jpg";
 import warwick from "../images/acclogo/warwick.png";
+import waterMusic from "../images/water_music.jpg";
 
 function Accommodations() {
   const [accommodations, setAccommodations] = useState([]);
@@ -49,22 +50,23 @@ function Accommodations() {
   if (loading) return <p className="loading">Loading accommodations...</p>;
 
   return (
-    <div className="page">
+      <div className="page-frame" style={{ backgroundImage: `url(${waterMusic})` }}>
+        <div className="page">
 
-      {/* ✅ STICKY HEADER */}
-      <div className="page-header sticky-header">
-        <h1>Accommodations</h1>
-        <p>Explore hotels, resorts, and guesthouses across Vanuatu.</p>
+          {/* ✅ STICKY HEADER */}
+        <div className="page-header sticky-header">
+          <h1>Accommodations</h1>
+          <p>Explore hotels, resorts, and guesthouses across Vanuatu.</p>
 
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Search accommodations..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search accommodations..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
 
       {/* ✅ SCROLLABLE CONTENT */}
       <div className="page-content">
@@ -108,6 +110,7 @@ function Accommodations() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

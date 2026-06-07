@@ -1,21 +1,13 @@
 import { useState, useEffect } from "react";
-import {
-  FaUserCircle,
-  FaHome,
-  FaMapMarkedAlt,
-  FaHotel,
-  FaCar,
-  FaSignOutAlt
-} from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 
 function Navbar({ setPage }) {
-  const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [active, setActive] = useState("home");
 
-  const goTo = (pageName) => {
-    setPage(pageName);
-    setOpen(false);
+  const goTo = (page) => {
+    setPage(page);
+    setActive(page);
   };
 
   useEffect(() => {
@@ -23,124 +15,61 @@ function Navbar({ setPage }) {
     if (stored) setUser(JSON.parse(stored));
   }, []);
 
-  useEffect(() => {
-    const handleClick = () => setProfileOpen(false);
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.reload();
-  };
-
   return (
-    <>
-      {/* NAVBAR */}
+    <div className="nav-wrapper">
       <nav className="navbar">
-        <ul className="nav-links desktop">
-          <li onClick={() => goTo("home")}>Home</li>
-          <li onClick={() => goTo("tours")}>Tour Operators</li>
-          <li onClick={() => goTo("accommodations")}>Accommodations</li>
-          <li onClick={() => goTo("cars")}>Car Rentals</li>
-
-          {/* ✅ PROFILE (DESKTOP) */}
-          {user && (
-            <li className="profile-section">
-              <div
-                className="profile-icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setProfileOpen(!profileOpen);
-                }}
-              >
-                <FaUserCircle />
-              </div>
-
-              {profileOpen && (
-                <div className="profile-dropdown">
-                  <p>Welcome, {user.name}</p>
-
-                  {/* ✅ NEW: GO TO PROFILE */}
-                  <p
-                    className="profile-link"
-                    onClick={() => {
-                      setProfileOpen(false);
-                      goTo("profile");
-                    }}
-                  >
-                    View Profile
-                  </p>
-
-                  <button onClick={handleLogout}>Logout</button>
-                </div>
-              )}
-            </li>
-          )}
-        </ul>
-
-        {/* HAMBURGER */}
-        <div className="hamburger" onClick={() => setOpen(true)}>
-          ☰
-        </div>
-      </nav>
-
-      {/* ✅ MOBILE SIDE MENU */}
-      {open && (
-        <div className="menu-overlay">
-          <div className="side-menu">
-
-            {/* PROFILE HEADER */}
-            {user && (
-              <div className="menu-profile">
-                <FaUserCircle className="menu-avatar" />
-                <p>{user.name}</p>
-              </div>
-            )}
-
-            {/* NAV ITEMS */}
-            <ul>
-              <li onClick={() => goTo("home")}>
-                <FaHome className="menu-icon" />
-                <span>Home</span>
-              </li>
-
-              <li onClick={() => goTo("tours")}>
-                <FaMapMarkedAlt className="menu-icon" />
-                <span>Tour Operators</span>
-              </li>
-
-              <li onClick={() => goTo("accommodations")}>
-                <FaHotel className="menu-icon" />
-                <span>Accommodations</span>
-              </li>
-
-              <li onClick={() => goTo("cars")}>
-                <FaCar className="menu-icon" />
-                <span>Car Rentals</span>
-              </li>
-
-              {/* ✅ NEW: PROFILE PAGE IN MOBILE */}
-              {user && (
-                <li onClick={() => goTo("profile")}>
-                  <FaUserCircle className="menu-icon" />
-                  <span>Profile</span>
-                </li>
-              )}
-
-              {/* LOGOUT */}
-              {user && (
-                <li onClick={handleLogout} className="logout">
-                  <FaSignOutAlt className="menu-icon" />
-                  <span>Logout</span>
-                </li>
-              )}
-            </ul>
-
+        {/* LEFT LOGO */}
+        <div className="nav-logo" onClick={() => goTo("home") }>
+          <img src="/main_logo.png" alt="logo" />
+          <div>
+            <h3>Vanuatu Centralized</h3>
+            <span>Booking System</span>
           </div>
         </div>
-      )}
-    </>
+
+        {/* CENTER LINKS */}
+        <ul className="nav-links">
+          <li
+            className={active === "home" ? "active" : ""}
+            onClick={() => goTo("home")}
+          >
+            Home
+          </li>
+          <li
+            className={active === "tours" ? "active" : ""}
+            onClick={() => goTo("tours")}
+          >
+            Tour Operators
+          </li>
+          <li
+            className={active === "accommodations" ? "active" : ""}
+            onClick={() => goTo("accommodations")}
+          >
+            Accommodations
+          </li>
+          <li
+            className={active === "cars" ? "active" : ""}
+            onClick={() => goTo("cars")}
+          >
+            Car Rentals
+          </li>
+        </ul>
+
+        {/* RIGHT BUTTON */}
+        <div className="nav-right">
+          {user ? (
+            <button className="nav-btn" onClick={() => goTo("profile")}>
+              <FaUser /> Profile
+            </button>
+          ) : (
+            <button className="nav-btn" onClick={() => goTo("login")}>
+              Sign In
+            </button>
+          )}
+        </div>
+      </nav>
+      
+    </div>
   );
 }
 

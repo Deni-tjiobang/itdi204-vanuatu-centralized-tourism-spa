@@ -13,6 +13,7 @@ import santocarhire from "../images/car_logos/santocarhire.png";
 import santotropical from "../images/car_logos/santotropicalcar.jpg";
 import wanderlust from "../images/car_logos/wanderlust.png";
 import worldcar from "../images/car_logos/worldcarrentals.jpg";
+import waterMusic from "../images/water_music.jpg";
 
 function CarRentals() {
   const [rentals, setRentals] = useState([]);
@@ -48,21 +49,22 @@ function CarRentals() {
   );
 
   return (
-    <div className="page">
+      <div className="page-frame" style={{ backgroundImage: `url(${waterMusic})` }}>
+        <div className="page">
 
-      <div className="page-header sticky-header">
-        <h1>Car Rentals</h1>
-        <p>Compare trusted rental companies.</p>
+          <div className="page-header sticky-header">
+          <h1>Car Rentals</h1>
+          <p>Compare trusted rental companies.</p>
 
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Search rentals..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search rentals..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
 
       <div className="page-content">
         <div className="card-grid">
@@ -99,6 +101,7 @@ function CarRentals() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 
