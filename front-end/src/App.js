@@ -7,6 +7,9 @@ import CarRentals from "./components/CarRentals";
 import AuthModal from "./components/AuthModal";
 import WelcomeScreen from "./components/WelcomeScreen";
 import Profile from "./components/Profile";
+import AdminLogin from "./components/AdminLogin";
+import AdminSignup from "./components/AdminSignup";
+import AdminDashboard from "./components/AdminDashboard";
 import "./App.css";
 
 function App() {
@@ -15,54 +18,129 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [showAuth, setShowAuth] = useState(false);
 
+  const [screen, setScreen] = useState("welcome");
+  const [manager, setManager] = useState(null);
+
+  // Restore user session
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setUser(JSON.parse(storedUser));
+
+    const storedManager = localStorage.getItem("manager");
+    if (storedManager) {
+      setManager(JSON.parse(storedManager));
+      setScreen("adminDashboard");
+    }
   }, []);
 
-  // LOCK SCREEN
-if (!user) {
+  // ✅ WELCOME SCREEN
+  if (screen === "welcome") {
+    return (
+      <WelcomeScreen
+       onTourist={() => setScreen("userAuth")}
+        onAdmin={() => setScreen("adminLogin")}
+      />
+    );
+  }
+
+  // ✅ USER LOGIN / SIGNUP SCREEN
+if (screen === "userAuth") {
   return (
-    <>
-      {/*SHOW ONLY WELCOME */}
-      {!showAuth && (
-        <WelcomeScreen
-          onStart={() => {
+    <div className="auth-container">
+      <AuthModal
+        show={true}
+        mode={authMode}
+        setMode={setAuthMode}
+        onAuthSuccess={(userData) => {
+          localStorage.setItem("user", JSON.stringify(userData));
+          setUser(userData);
+          setScreen("app"); // ✅ ONLY after login
+        }}
+      />
+    </div>
+  );
+}
+
+  // ✅ ADMIN LOGIN
+ if (screen === "adminLogin") {
+  return (
+    <AdminLogin
+      onAuthSuccess={(data) => {
+        localStorage.setItem("manager", JSON.stringify(data));
+        setManager(data);
+        setScreen("adminDashboard");
+      }}
+      onBack={() => setScreen("welcome")}
+      onGoToSignup={() => setScreen("adminSignup")}
+    />
+  );
+}
+
+  // ✅ ADMIN SIGNUP
+if (screen === "adminSignup") {
+  return (
+    <AdminSignup
+      onBack={() => setScreen("adminLogin")}
+      onAuthSuccess={(data) => {
+        setManager(data);
+        setScreen("adminDashboard");
+      }}
+    />
+  );
+}
+
+  // ✅ ADMIN DASHBOARD
+  if (screen === "adminDashboard" && manager) {
+    return (
+      <AdminDashboard
+        manager={manager}
+        onLogout={() => {
+          localStorage.removeItem("manager");
+          setManager(null);
+          setScreen("welcome");
+        }}
+      />
+    );
+  }
+
+  // ✅ TOURIST APP
+  if (screen === "app") {
+    return (
+      <>
+        <Navbar
+          setPage={setPage}
+          onLoginClick={() => {
             setAuthMode("login");
             setShowAuth(true);
           }}
         />
-      )}
 
-      {/* SHOW ONLY LOGIN (NOT BELOW, ONLY WHEN TRIGGERED) */}
-      {showAuth && (
-        <div className="auth-container">
-          <AuthModal
-            show={true}
-            mode={authMode}
-            setMode={setAuthMode}
-            onAuthSuccess={(user) => {
-              localStorage.setItem("user", JSON.stringify(user));
-              setUser(user);
-            }}
-          />
-        </div>
-      )}
-    </>
-  );
-}
+        {page === "home" && <Hero setPage={setPage} />}
+        {page === "tours" && <ForeignerTours />}
+        {page === "accommodations" && <Accommodations />}
+        {page === "cars" && <CarRentals />}
+        {page === "profile" && user && <Profile user={user} />}
 
-  return (
-    <>
-      <Navbar setPage={setPage} />
+        {/* ✅ AUTH MODAL */}
+        {showAuth && (
+          <div className="auth-container">
+            <AuthModal
+              show={true}
+              mode={authMode}
+              setMode={setAuthMode}
+              onAuthSuccess={(userData) => {
+                localStorage.setItem("user", JSON.stringify(userData));
+                setUser(userData);
+                setShowAuth(false);
+              }}
+            />
+          </div>
+        )}
+      </>
+    );
+  }
 
-      {page === "home" && <Hero setPage={setPage} />}
-      {page === "tours" && <ForeignerTours />}
-      {page === "accommodations" && <Accommodations />}
-      {page === "cars" && <CarRentals />}
-      {page === "profile" && <Profile user={user} />}
-    </>
-  );
+  return null;
 }
 
 export default App;

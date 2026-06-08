@@ -39,10 +39,6 @@ app.get("/accommodations", async (req, res) => {
   res.json(result.rows);
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
-
 app.get("/car-rentals", async (req, res) => {
   const result = await pool.query("SELECT * FROM car_rentals");
   res.json(result.rows);
@@ -57,7 +53,7 @@ app.post("/signup", async (req, res) => {
   const { name, email, password, firstName, lastName, country, dob } = req.body;
 
   try {
-    console.log("SIGNUP DATA:", req.body);  // ✅ DEBUG
+    console.log("SIGNUP DATA:", req.body);  
 
     const existing = await pool.query(
       "SELECT * FROM users WHERE email = $1",
@@ -88,6 +84,164 @@ app.post("/signup", async (req, res) => {
     res.status(500).json({ error: "Server error during signup" });
   }
 });
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+});
+app.post("/admin-signup", async (req, res) => {
+  const { name, email, password, department, secretKey } = req.body;
+
+  const validKey = process.env.ADMIN_SECRET_KEY || "VANUATU_ADMIN_2026";
+
+  if (secretKey !== validKey) {
+    return res.status(403).json({ error: "Invalid secret key" });
+  }
+
+  try {
+    const existing = await pool.query(
+      "SELECT * FROM managers WHERE email = $1",
+      [email]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.json({ error: "Manager account already exists" });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO managers (name, email, password, department)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, email, department`,
+      [name, email, password, department]
+    );
+
+    res.json({ manager: result.rows[0] });
+
+  } catch (err) {
+    console.error("ADMIN SIGNUP ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/admin-login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM managers WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.json({ error: "Manager account not found" });
+    }
+
+    const manager = result.rows[0];
+
+    if (manager.password !== password) {
+      return res.json({ error: "Incorrect password" });
+    }
+
+    const { password: _pw, ...safeManager } = manager;
+    res.json({ manager: safeManager });
+  } catch (err) {
+    console.error("ADMIN LOGIN ERROR:", err);
+    res.status(500).json({ error: "Server error during admin login" });
+  }
+});
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email,
+       country, dob, created_at
+       FROM users`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+app.delete("/admin/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM users WHERE id = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "User deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete error" });
+  }
+});
+
+app.delete("/admin/accommodations/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM accommodations WHERE id = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Accommodation not found" });
+    }
+
+    res.json({ message: "Accommodation deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete error" });
+  }
+});
+
+app.delete("/admin/car-rentals/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM car_rentals WHERE id = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Car rental not found" });
+    }
+
+    res.json({ message: "Car rental deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete error" });
+  }
+});
+
+app.delete("/admin/tours/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM tour_operators WHERE id = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Tour operator not found" });
+    }
+
+    res.json({ message: "Tour operator deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete error" });
+  }
+});
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -98,6 +252,7 @@ app.post("/login", async (req, res) => {
         id,
         name,
         email,
+        password,
         first_name AS "firstName",
         last_name AS "lastName",
         country,
@@ -107,24 +262,24 @@ app.post("/login", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.json({ error: "User not found" });
+      return res.json({
+        error: "Account not found or has been deleted"
+      });
     }
 
     const user = result.rows[0];
 
-    const passwordCheck = await pool.query(
-      "SELECT password FROM users WHERE email = $1",
-      [email]
-    );
-
-    if (passwordCheck.rows[0].password !== password) {
+    if (user.password !== password) {
       return res.json({ error: "Incorrect password" });
     }
 
-    res.json({ user });
+    // ✅ REMOVE PASSWORD BEFORE RETURNING
+    const { password: _pw, ...safeUser } = user;
+
+    res.json({ user: safeUser });
 
   } catch (err) {
-    console.error(err);
+    console.error("LOGIN ERROR:", err);
     res.status(500).json({ error: "Server error during login" });
   }
 });
