@@ -53,7 +53,7 @@ app.post("/signup", async (req, res) => {
   const { name, email, password, firstName, lastName, country, dob } = req.body;
 
   try {
-    console.log("SIGNUP DATA:", req.body);  // ✅ DEBUG
+    console.log("SIGNUP DATA:", req.body);  
 
     const existing = await pool.query(
       "SELECT * FROM users WHERE email = $1",
@@ -106,7 +106,6 @@ app.post("/admin-signup", async (req, res) => {
       return res.json({ error: "Manager account already exists" });
     }
 
-    // ✅ THIS WAS MISSING (IMPORTANT)
     const result = await pool.query(
       `INSERT INTO managers (name, email, password, department)
        VALUES ($1, $2, $3, $4)
