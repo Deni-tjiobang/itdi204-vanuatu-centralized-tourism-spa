@@ -1,4 +1,4 @@
--- USERS (Signup / Login)
+-- VANUATU CENTRALIZED SPA DATABASE SCHEMA
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     full_name TEXT NOT NULL,
@@ -8,15 +8,6 @@ CREATE TABLE users (
     dob DATE,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,  -- In production, this should be hashed
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- USER PREFERENCES (from popup idea)
-CREATE TABLE user_preferences (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    interested_service TEXT,       -- accommodation / tours / car rentals
-    preferred_location TEXT,       -- Port Vila / Santo / etc.
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -57,14 +48,6 @@ CREATE TABLE tour_operators (
     email TEXT,
     website TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- VISITS / ENGAGEMENT TRACKING (YOUR IDEA)
-CREATE TABLE user_visits (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
-    page_visited TEXT,
-    visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS managers (

@@ -19,7 +19,7 @@ function CarRentals() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/car-rentals")
+    fetch("${process.env.REACT_APP_API_URL}/car-rentals")
       .then(res => res.json())
       .then(data => setRentals(data));
   }, []);

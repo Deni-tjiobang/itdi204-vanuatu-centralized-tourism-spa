@@ -20,7 +20,7 @@ function ForeignerTours() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/tours")
+    fetch("${process.env.REACT_APP_API_URL}/tours")
       .then(res => res.json())
       .then(data => setTours(data));
   }, []);
