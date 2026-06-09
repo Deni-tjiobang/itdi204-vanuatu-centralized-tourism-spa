@@ -84,6 +84,68 @@ app.post("/signup", async (req, res) => {
     res.status(500).json({ error: "Server error during signup" });
   }
 });
+
+app.put("/update-profile", async (req, res) => {
+  const { id, firstName, lastName, name, email, country, dob, password } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    // Build the SET clause dynamically so we only update what was sent
+    const fields  = [];
+    const values  = [];
+    let   idx     = 1;
+
+    if (firstName !== undefined) { fields.push(`first_name = $${idx++}`);  values.push(firstName); }
+    if (lastName  !== undefined) { fields.push(`last_name  = $${idx++}`);  values.push(lastName);  }
+    if (name      !== undefined) { fields.push(`name       = $${idx++}`);  values.push(name);      }
+    if (email     !== undefined) { fields.push(`email      = $${idx++}`);  values.push(email);     }
+    if (country   !== undefined) { fields.push(`country    = $${idx++}`);  values.push(country);   }
+    if (dob       !== undefined) { fields.push(`dob        = $${idx++}`);  values.push(dob);       }
+
+    // Only update password if the client sent a non-empty new one
+    if (password && password.trim()) {
+      fields.push(`password = $${idx++}`);
+      values.push(password.trim());
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ error: "No fields to update" });
+    }
+
+    values.push(id); // last param = WHERE id = $N
+
+    const query = `
+      UPDATE users
+      SET    ${fields.join(", ")}
+      WHERE  id = $${idx}
+      RETURNING
+        id,
+        name,
+        email,
+        first_name  AS "firstName",
+        last_name   AS "lastName",
+        country,
+        dob,
+        created_at
+    `;
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ user: result.rows[0] });
+
+  } catch (err) {
+    console.error("UPDATE PROFILE ERROR:", err);
+    res.status(500).json({ error: "Server error while updating profile" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
