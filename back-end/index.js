@@ -25,16 +25,14 @@ if (process.env.RENDER) {
   dbPassword = process.env.DB_PASSWORD;
 }
 
-//  DATABASE CONNECTION
+// Replace the whole if/else block at the top with just:
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
-  password: dbPassword,
+  password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false }
 });
 
 app.get("/accommodations", async (req, res) => {
