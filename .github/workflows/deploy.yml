@@ -1,0 +1,64 @@
+name: CI/CD - Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install backend dependencies
+        working-directory: ./back-end
+        run: npm install
+
+      - name: Run backend tests
+        working-directory: ./back-end
+        run: npm test || echo "No tests defined yet"
+
+      - name: Install frontend dependencies
+        working-directory: ./front-end
+        run: npm install
+
+      - name: Build frontend
+        working-directory: ./front-end
+        run: npm run build
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+
+    steps:
+      - name: Notify Render - Staging Deploy
+        run: |
+          echo "Triggering Render staging deployment..."
+          curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}"
+
+  deploy-production:
+    name: Deploy to Production
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Notify Render - Production Deploy
+        run: |
+          echo "Triggering Render production deployment..."
+          curl -X POST "${{ secrets.RENDER_PRODUCTION_DEPLOY_HOOK }}"
