@@ -1,190 +1,348 @@
-import { useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
+import { useState, useRef } from "react";
+import {
+  FaUserCircle, FaUser, FaEnvelope, FaGlobe,
+  FaCalendarAlt, FaLock, FaEye, FaEyeSlash,
+  FaCamera, FaCheck, FaExclamationCircle
+} from "react-icons/fa";
 
-function Profile({ user }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [image, setImage] = useState(user.image || "");
+function Profile({ user, onUserUpdate }) {
+  /* ── view / edit mode ── */
+  const [isEditing, setIsEditing]   = useState(false);
 
-  const [formData, setFormData] = useState({
+  /* ── profile photo ── */
+  const [image, setImage]           = useState(user.image || "");
+  const fileRef                     = useRef(null);
+
+  /* ── form state (all editable fields) ── */
+  const [form, setForm]             = useState({
     firstName: user.firstName || "",
-    lastName: user.lastName || "",
-    email: user.email || "",
-    country: user.country || "",
-    dob: user.dob || ""
+    lastName:  user.lastName  || "",
+    email:     user.email     || "",
+    country:   user.country   || "",
+    dob:       user.dob       ? user.dob.split("T")[0] : "",
+    password:  "",
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  /* ── password visibility ── */
+  const [showPw, setShowPw]         = useState(false);
+
+  /* ── save state ── */
+  const [saving,  setSaving]        = useState(false);
+  const [notif,   setNotif]         = useState(null);   // { type, text }
+
+  /* ── helpers ── */
+  const notify = (type, text) => {
+    setNotif({ type, text });
+    setTimeout(() => setNotif(null), 3500);
+  };
+
+  const formatDate = (d) => {
+    if (!d) return "—";
+    const date = new Date(d);
+    return isNaN(date) ? d : date.toLocaleDateString(undefined, {
+      year: "numeric", month: "long", day: "numeric"
     });
   };
 
+  /* ── photo upload (stored in localStorage only) ── */
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
-
     reader.onloadend = () => {
       setImage(reader.result);
-
-      const updatedUser = {
-        ...user,
-        image: reader.result
-      };
-
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem("user", JSON.stringify({ ...user, image: reader.result }));
     };
-
     reader.readAsDataURL(file);
   };
 
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString();
-  };
+  /* ── field change ── */
+  const handleChange = (e) =>
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
+  /* ── save to backend ── */
   const handleSave = async () => {
-    const updatedUser = {
-      ...user,
-      ...formData,
-      image: image,
-      name: formData.firstName + " " + formData.lastName
-    };
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      notify("error", "First and last name are required.");
+      return;
+    }
+    if (!form.email.trim()) {
+      notify("error", "Email is required.");
+      return;
+    }
 
+    setSaving(true);
     try {
-      const res = await fetch("http://localhost:5000/update-profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(updatedUser)
+      const payload = {
+        id:        user.id,
+        firstName: form.firstName.trim(),
+        lastName:  form.lastName.trim(),
+        name:      `${form.firstName.trim()} ${form.lastName.trim()}`,
+        email:     form.email.trim(),
+        country:   form.country.trim(),
+        dob:       form.dob,
+        image,
+      };
+
+      /* Only send password if the user typed a new one */
+      if (form.password.trim()) {
+        payload.password = form.password.trim();
+      }
+
+      const res  = await fetch("http://localhost:5000/update-profile", {
+        method:  "PUT",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.reload();
-      } else {
-        alert("Failed to update profile");
-      }
+        const saved = { ...data.user, image };
+        localStorage.setItem("user", JSON.stringify(saved));
 
+        /* Let App.js know so the nav name updates without a reload */
+        if (typeof onUserUpdate === "function") onUserUpdate(saved);
+
+        /* Clear password field, leave rest updated */
+        setForm(prev => ({ ...prev, password: "" }));
+        setIsEditing(false);
+        notify("success", "Profile saved successfully!");
+      } else {
+        notify("error", data.error || "Failed to save. Please try again.");
+      }
     } catch (err) {
       console.error(err);
-      alert("Error updating profile");
+      notify("error", "Network error — could not save profile.");
+    } finally {
+      setSaving(false);
     }
   };
 
+  const handleCancel = () => {
+    /* Reset form back to last-saved values */
+    setForm({
+      firstName: user.firstName || "",
+      lastName:  user.lastName  || "",
+      email:     user.email     || "",
+      country:   user.country   || "",
+      dob:       user.dob ? user.dob.split("T")[0] : "",
+      password:  "",
+    });
+    setIsEditing(false);
+  };
+
+  /* ══════════════════════════════════════════════════
+     RENDER
+  ══════════════════════════════════════════════════ */
   return (
     <div className="auth-container">
+      <div className="auth-card profile-card">
 
-      <div className="auth-card">
+        {/* ── LOGO ── */}
+        <img src="/main_logo.png" className="auth-logo" alt="logo" />
 
+        {/* ── AVATAR + photo upload ── */}
         <div className="profile-image-section">
-          {image ? (
-            <img src={image} className="profile-image" alt="profile" />
-          ) : (
-            <FaUserCircle className="profile-avatar" />
-          )}
+          <div
+            className="profile-avatar-wrap"
+            onClick={() => fileRef.current?.click()}
+            title="Change photo"
+          >
+            {image
+              ? <img src={image} className="profile-image" alt="profile" />
+              : <FaUserCircle className="profile-avatar" />
+            }
+            <div className="profile-camera-badge">
+              <FaCamera />
+            </div>
+          </div>
 
-          <label className="upload-btn">
-            Change Photo
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              hidden
-            />
-          </label>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            hidden
+          />
+
+          <h2 className="profile-name">
+            {user.name || `${user.firstName} ${user.lastName}` || "Your Profile"}
+          </h2>
+          <p className="auth-sub profile-sub">Manage your account information</p>
         </div>
 
-        <h2>{user.name}</h2>
+        {/* ── NOTIFICATION ── */}
+        {notif && (
+          <div className={`profile-notif ${notif.type}`}>
+            {notif.type === "success"
+              ? <FaCheck style={{ marginRight: 7 }} />
+              : <FaExclamationCircle style={{ marginRight: 7 }} />
+            }
+            {notif.text}
+          </div>
+        )}
 
+        {/* ══════════════════════
+            VIEW MODE
+        ══════════════════════ */}
         {!isEditing && (
-          <>
-            <div className="profile-info">
+          <div className="auth-body">
 
-              <p><strong>Email:</strong> {user.email}</p>
-              <p><strong>First Name:</strong> {user.firstName || "-"}</p>
-              <p><strong>Last Name:</strong> {user.lastName || "-"}</p>
-              <p><strong>Country:</strong> {user.country || "-"}</p>
-              <p><strong>Date of Birth:</strong> {formatDate(user.dob)}</p>
+            <div className="profile-info-grid">
 
+              <div className="profile-info-row">
+                <span className="profile-info-label">
+                  <FaUser className="profile-info-icon" /> First Name
+                </span>
+                <span className="profile-info-value">
+                  {user.firstName || "—"}
+                </span>
+              </div>
+
+              <div className="profile-info-row">
+                <span className="profile-info-label">
+                  <FaUser className="profile-info-icon" /> Last Name
+                </span>
+                <span className="profile-info-value">
+                  {user.lastName || "—"}
+                </span>
+              </div>
+
+              <div className="profile-info-row">
+                <span className="profile-info-label">
+                  <FaEnvelope className="profile-info-icon" /> Email
+                </span>
+                <span className="profile-info-value">
+                  {user.email || "—"}
+                </span>
+              </div>
+
+              <div className="profile-info-row">
+                <span className="profile-info-label">
+                  <FaGlobe className="profile-info-icon" /> Country
+                </span>
+                <span className="profile-info-value">
+                  {user.country || "—"}
+                </span>
+              </div>
+
+              <div className="profile-info-row">
+                <span className="profile-info-label">
+                  <FaCalendarAlt className="profile-info-icon" /> Date of Birth
+                </span>
+                <span className="profile-info-value">
+                  {formatDate(user.dob)}
+                </span>
+              </div>
+
+            </div>
+
+            <button className="profile-btn" onClick={() => setIsEditing(true)}>
+              Edit Profile
+            </button>
+
+          </div>
+        )}
+
+        {/* ══════════════════════
+            EDIT MODE
+        ══════════════════════ */}
+        {isEditing && (
+          <div className="auth-body">
+
+            {/* First name */}
+            <div className="input-box">
+              <FaUser className="input-icon" />
+              <input
+                name="firstName"
+                placeholder="First name"
+                value={form.firstName}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Last name */}
+            <div className="input-box">
+              <FaUser className="input-icon" />
+              <input
+                name="lastName"
+                placeholder="Last name"
+                value={form.lastName}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="input-box">
+              <FaEnvelope className="input-icon" />
+              <input
+                name="email"
+                type="email"
+                placeholder="Email address"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Country */}
+            <div className="input-box">
+              <FaGlobe className="input-icon" />
+              <input
+                name="country"
+                placeholder="Country"
+                value={form.country}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Date of birth */}
+            <div className="input-box">
+              <FaCalendarAlt className="input-icon" />
+              <input
+                name="dob"
+                type="date"
+                value={form.dob}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* New password (optional) */}
+            <div className="input-box">
+              <FaLock className="input-icon" />
+              <input
+                name="password"
+                type={showPw ? "text" : "password"}
+                placeholder="New password (leave blank to keep)"
+                value={form.password}
+                onChange={handleChange}
+              />
+              {showPw
+                ? <FaEyeSlash className="eye-icon" onClick={() => setShowPw(false)} />
+                : <FaEye      className="eye-icon" onClick={() => setShowPw(true)}  />
+              }
             </div>
 
             <button
               className="profile-btn"
-              onClick={() => setIsEditing(true)}
+              onClick={handleSave}
+              disabled={saving}
             >
-              Edit Profile
-            </button>
-          </>
-        )}
-
-        {isEditing && (
-          <>
-            <div className="input-box">
-              <input
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                placeholder="First Name"
-              />
-            </div>
-
-            <div className="input-box">
-              <input
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                placeholder="Last Name"
-              />
-            </div>
-
-            <div className="input-box">
-              <input
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-              />
-            </div>
-
-            <div className="input-box">
-              <input
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                placeholder="Country"
-              />
-            </div>
-
-            <div className="input-box">
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-              />
-            </div>
-
-            <button className="profile-btn" onClick={handleSave}>
-              Save Changes
+              {saving ? "Saving…" : "Save Changes"}
             </button>
 
             <button
               className="profile-btn cancel-btn"
-              onClick={() => setIsEditing(false)}
+              onClick={handleCancel}
+              disabled={saving}
             >
               Cancel
             </button>
-          </>
+
+          </div>
         )}
 
       </div>
-
     </div>
   );
 }

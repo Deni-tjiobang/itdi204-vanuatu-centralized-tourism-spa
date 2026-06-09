@@ -875,164 +875,195 @@ padding-top: 12px;
   color: #2F80ED;
   font-weight: 600;
 }
-/* ===== PROFILE SECTION ===== */
+/* ==========================================================
+   PROFILE PAGE – append to the bottom of App.css
+   Replaces/extends the old .profile-* rules
+========================================================== */
 
-.profile-section {
+/* ── Wider card so all fields sit comfortably ── */
+.profile-card {
+  width: 90%;
+  max-width: 440px;       /* same feel as sign-up card */
+  max-height: 92vh;       /* never taller than viewport */
+  overflow-y: auto;       /* scroll inside card if needed */
+}
+
+/* ── Avatar wrapper (click to change) ── */
+.profile-avatar-wrap {
   position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.profile-avatar-wrap:hover .profile-camera-badge {
+  opacity: 1;
+}
+
+/* Camera badge */
+.profile-camera-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f80ed, #43c6ac);
+  color: white;
   display: flex;
   align-items: center;
-  z-index: 10000;
+  justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
 }
 
-.profile-icon {
-  font-size: 32px;
-  color: #2f80ed;
-  cursor: pointer;
-  margin-left: 20px;
-  transition: all 0.25s ease;
-}
-
-.profile-icon:hover {
-  transform: scale(1.15) rotate(5deg);
-  color: #43C6AC;
-}
-
-
-.profile-dropdown {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border-radius: 14px;
-  padding: 15px;
-  width: 220px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  animation: fadeSlide 0.25s ease;
-}
-
-/* animation upgrade */
-@keyframes fadeSlide {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
+/* Always show badge on touch devices */
+@media (hover: none) {
+  .profile-camera-badge {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-.profile-dropdown p {
-  margin: 0 0 12px;
-  font-weight: 500;
+.profile-name {
+  margin: 8px 0 0;
+  font-size: 1.3rem;
+  color: #0b2546;
 }
 
-.profile-dropdown button {
+.profile-sub {
+  margin: 4px 0 14px;
+  font-size: 0.88rem;
+}
+
+/* ── Notification banner ── */
+.profile-notif {
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 10px;
-  background: #2f80ed;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.profile-dropdown button:hover {
-  background: #1b5fc9;
-}
-
-.profile-link {
-  cursor: pointer;
-  margin: 8px 0;
-  color: #2F80ED;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.88rem;
   font-weight: 500;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  animation: popUp 0.3s ease;
 }
 
-.profile-link:hover {
-  text-decoration: underline;
+.profile-notif.success {
+  background: #d4edda;
+  color: #155724;
 }
 
-.profile-card input {
+.profile-notif.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* ── Info grid (view mode) ── */
+.profile-info-grid {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(47, 128, 237, 0.12);
 }
 
-.cancel-btn {
-  background: #ccc;
+.profile-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f7fbff;
+  border-bottom: 1px solid rgba(47, 128, 237, 0.08);
+  gap: 10px;
+}
+
+.profile-info-row:last-child {
+  border-bottom: none;
+}
+
+.profile-info-row:nth-child(even) {
+  background: #eef5ff;
+}
+
+.profile-info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2f80ed;
+  white-space: nowrap;
+  min-width: 130px;
+}
+
+.profile-info-icon {
+  font-size: 0.8rem;
+  color: #2f80ed;
+}
+
+.profile-info-value {
+  font-size: 0.88rem;
+  color: #0b2546;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* ── Make auth-body fill the card properly ── */
+.profile-card .auth-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Consistent button spacing inside profile ── */
+.profile-card .profile-btn {
+  margin-top: 12px;
+}
+
+.profile-card .cancel-btn {
+  background: #e0e0e0;
   color: #333;
   margin-top: 8px;
 }
 
-.profile-avatar {
-  font-size: 85px;
-  color: #2F80ED;
-  filter: drop-shadow(0 6px 15px rgba(0,0,0,0.2));
+.profile-card .cancel-btn:hover {
+  background: #d0d0d0;
 }
 
-/* reuse same style system */
-.profile-btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 30px;
-  border: none;
-  background: linear-gradient(
-    90deg,
-    #2F80ED,
-    #43C6AC
-  );
-
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.profile-image-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.profile-image {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-}
-
-.upload-btn {
-  font-size: 14px;
-  color: #2F80ED;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.upload-btn:hover {
-  text-decoration: underline;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
+/* ── Responsive tweaks ── */
+@media (max-width: 480px) {
+  .profile-card {
+    max-width: 100%;
+    padding: 22px 18px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .profile-info-label {
+    min-width: 110px;
+    font-size: 0.78rem;
+  }
+
+  .profile-info-value {
+    font-size: 0.83rem;
+  }
+
+  .profile-name {
+    font-size: 1.15rem;
   }
 }
+
 /* =========================================
    ADMIN DASHBOARD — AdminDashboard.css
    Extends App.css with admin-only styles.
    Import this in AdminDashboard.js.
 ========================================= */
-
 
 /* ─────────────────────────────────────────
    STICKY HEADER
