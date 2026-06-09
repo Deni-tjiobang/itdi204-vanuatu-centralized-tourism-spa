@@ -32,6 +32,9 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: dbPassword,
   port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 app.get("/accommodations", async (req, res) => {
@@ -335,7 +338,6 @@ app.post("/login", async (req, res) => {
       return res.json({ error: "Incorrect password" });
     }
 
-    // ✅ REMOVE PASSWORD BEFORE RETURNING
     const { password: _pw, ...safeUser } = user;
 
     res.json({ user: safeUser });
