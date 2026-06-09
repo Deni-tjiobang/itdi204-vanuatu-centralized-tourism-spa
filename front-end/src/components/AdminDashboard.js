@@ -109,7 +109,7 @@ const imageMap = {
 /* ─────────────────────────────────────────
    CONSTANTS
 ───────────────────────────────────────── */
-const API = "${process.env.REACT_APP_API_URL}";
+const API = `${process.env.REACT_APP_API_URL}`;
 
 const ENDPOINTS = {
   accommodations: { read: "/accommodations",   write: "/admin/accommodations" },
